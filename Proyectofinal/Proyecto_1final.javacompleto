@@ -1,0 +1,165 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
+ */
+package proyecto_1final;
+
+import java.util.*;
+
+class Usuario {
+    private final String nombre;
+    private final String correo;
+    private final String contrasena;
+    
+    public Usuario(String nombre, String correo, String contrasena) {
+        this.nombre = nombre;
+        this.correo = correo;
+        this.contrasena = contrasena;
+    }
+    
+    public String getCorreo() { return correo; }
+    public String getContrasena() { return contrasena; }
+    public String getNombre() { return nombre; }
+}
+
+class Proyecto {
+    private final String nombre;
+    private final String tipo;
+    private final Date fechaCreacion;
+    private final List<String> tareas;
+    
+    public Proyecto(String nombre, String tipo) {
+        this.nombre = nombre;
+        this.tipo = tipo;
+        this.fechaCreacion = new Date();
+        this.tareas = new ArrayList<>();
+    }
+    
+    public void agregarTarea(String tarea) {
+        tareas.add(tarea);
+    }
+    
+    public void mostrarDetalles() {
+        System.out.println("Nombre: " + nombre);
+        System.out.println("Tipo: " + tipo);
+        System.out.println("Fecha de creación: " + fechaCreacion);
+        System.out.println("Tareas: " + tareas);
+    }
+    
+    public Date getFechaCreacion() { return fechaCreacion; }
+    public String getNombre() { return nombre; }  // Método implementado correctamente
+}
+
+class Sistema {
+    private final Map<String, Usuario> usuarios;
+    private final List<Proyecto> proyectos;
+    
+    public Sistema() {
+        usuarios = new HashMap<>();
+        proyectos = new ArrayList<>();
+    }
+    
+    public boolean registrarUsuario(String nombre, String correo, String contrasena) {
+        if (usuarios.containsKey(correo)) {
+            System.out.println("El usuario ya está registrado.");
+            return false;
+        }
+        usuarios.put(correo, new Usuario(nombre, correo, contrasena));
+        System.out.println("Usuario registrado exitosamente.");
+        return true;
+    }
+
+    public Usuario iniciarSesion(String correo, String contrasena) {
+        if (usuarios.containsKey(correo) && usuarios.get(correo).getContrasena().equals(contrasena)) {
+            System.out.println("Inicio de sesión exitoso.");
+            return usuarios.get(correo);
+        }
+        System.out.println("Correo o contraseña incorrectos.");
+        return null;
+    }
+    
+    public void crearProyecto(String nombre, String tipo) {
+        Proyecto nuevoProyecto = new Proyecto(nombre, tipo);
+        proyectos.add(nuevoProyecto);
+        System.out.println("Proyecto creado exitosamente.");
+    }
+    
+    public void listarProyectos() {
+        proyectos.sort(Comparator.comparing(Proyecto::getFechaCreacion));
+        for (Proyecto p : proyectos) {
+            p.mostrarDetalles();
+        }
+    }
+
+    // Implementación de buscarProyecto
+    public Proyecto buscarProyecto(String buscarNombre) {
+        for (Proyecto proyecto : proyectos) {
+            if (proyecto.getNombre().equalsIgnoreCase(buscarNombre)) {
+                return proyecto;  // Proyecto encontrado
+            }
+        }
+        return null;  // Proyecto no encontrado
+    }
+}
+
+public class Proyecto_1final {
+    public static void main(String[] args) {
+        Sistema sistema = new Sistema();
+        Scanner scanner = new Scanner(System.in);
+        
+        while (true) {
+            System.out.println("1. Registrarse");
+            System.out.println("2. Iniciar sesion");
+            System.out.println("3. Crear proyecto");
+            System.out.println("4. Listar proyectos");
+            System.out.println("5. Buscar proyecto");
+            System.out.println("6. Salir");
+            System.out.print("Seleccione una opcion: ");
+            
+            int opcion = scanner.nextInt();
+            scanner.nextLine();
+            
+            switch (opcion) {
+                case 1 -> {
+                    System.out.print("Nombre: ");
+                    String nombre = scanner.nextLine();
+                    System.out.print("Correo: ");
+                    String correo = scanner.nextLine();
+                    System.out.print("Contraseña: ");
+                    String contrasena = scanner.nextLine();
+                    sistema.registrarUsuario(nombre, correo, contrasena);
+                }
+                case 2 -> {
+                    System.out.print("Correo: ");
+                    String correo = scanner.nextLine();
+                    System.out.print("Contraseña: ");
+                    String contrasena = scanner.nextLine();
+                    sistema.iniciarSesion(correo, contrasena);
+                }
+                case 3 -> {
+                    System.out.print("Nombre del proyecto: ");
+                    String nombreProyecto = scanner.nextLine();
+                    System.out.print("Tipo de proyecto: ");
+                    String tipoProyecto = scanner.nextLine();
+                    sistema.crearProyecto(nombreProyecto, tipoProyecto);
+                }
+                case 4 -> sistema.listarProyectos();
+                case 5 -> {
+                    System.out.print("Ingrese el nombre del proyecto a buscar: ");
+                    String buscarNombre = scanner.nextLine();
+                    Proyecto proyecto = sistema.buscarProyecto(buscarNombre);
+                    if (proyecto != null) {
+                        proyecto.mostrarDetalles();
+                    } else {
+                        System.out.println("Proyecto no encontrado.");
+                    }
+                }
+                case 6 -> {
+                    System.out.println("Saliendo...");
+                    return;
+                }
+                default -> System.out.println("Opción no válida.");
+            }
+        }
+    }
+}
